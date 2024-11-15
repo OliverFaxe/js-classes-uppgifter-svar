@@ -7,21 +7,30 @@ class School {
   }
   addTeacher(...teachers) {
     for (let teacher of teachers) {
-        this.teachers.push(teacher);
+      this.teachers.push(teacher);
     }
     return "Action completed";
   }
   addSubject(...subjects) {
     for (let subject of subjects) {
-        this.subjects.push(subject);
+      this.subjects.push(subject);
     }
     return "Action completed";
   }
   addStudent(...students) {
     for (let student of students) {
-        this.students.push(student);
+      this.students.push(student);
     }
     return "Action completed";
+  }
+  fireTeacher(teacher) {
+    let x = this.teachers.indexOf(teacher);
+    this.teachers.splice(x, 1);
+
+    for (let subject of teacher.subjects) {
+      subject.teacher = null;
+    }
+    teacher.subjects = [];
   }
 }
 
@@ -36,10 +45,30 @@ class Subject {
   }
   addStudentToSubject(...students) {
     for (let student of students) {
-        this.students.push(student);
-        student.subjects.push(this);
+      this.students.push(student);
+      student.subjects.push(this);
     }
     return "Action completed";
+  }
+  relegateStudent(...students) {
+    for (let student of students) {
+      console.log(student1);
+      let x = this.students.indexOf(student);
+      console.log(student1);
+      if (x > -1) {
+        this.students.splice(x, 1);
+        console.log(student1);
+      }
+      for (let subject of student.subjects) {
+        console.log(student1);
+        let y = student.subjects.indexOf(this);
+        console.log(student1);
+        if (y > -1) {
+          student.subjects.splice(y, 1);
+          console.log(student1);
+        }
+      }
+    }
   }
 }
 
@@ -57,25 +86,29 @@ class Student {
   }
   enlistToSubject(...subjects) {
     for (let subject of subjects) {
-        this.subjects.push(subject);
-        subject.students.push(this);
+      this.subjects.push(subject);
+      subject.students.push(this);
     }
     return "Action completed";
   }
   quitSubject(...subjects) {
     for (let subject of subjects) {
-        let indexPosition = this.subjects.indexOf(subject)
-        if (indexPosition !== -1) {
-            this.subjects.splice(indexPosition, 1);
+      let indexPosition = this.subjects.indexOf(subject);
+      if (indexPosition !== -1) {
+        this.subjects.splice(indexPosition, 1);
 
-            for (let student of subject.students) {
-                let studentIndex = student.subjects.indexOf(subject);
-                if (studentIndex !== -1) {
-                    student.subjects.splice(studentIndex, 1);
-                }
-            }
+        for (let student of subject.students) {
+          let studentIndex = student.subjects.indexOf(subject);
+          if (studentIndex !== -1) {
+            student.subjects.splice(studentIndex, 1);
+          }
         }
+      }
     }
+  }
+  flyttaStudent(subject, newSubject) {
+    let x = this.subjects.indexOf(subject);
+    this.subjects.splice(x, 1, newSubject);
   }
 }
 
@@ -92,8 +125,8 @@ class Teacher {
   }
   addSubjectToTeacher(...subjects) {
     for (let subject of subjects) {
-        this.subjects.push(subject);
-        subject.teacher = this;
+      this.subjects.push(subject);
+      subject.teacher = this;
     }
     return "Action completed";
   }
@@ -103,6 +136,55 @@ const teacher1 = new Teacher("Lars", 56);
 const teacher2 = new Teacher("Anna", 47);
 const teacher3 = new Teacher("Mats", 65);
 
+class Grades {
+  constructor() {
+    this.grades = []; // Holds all the grades
+  }
+  assignGrade(student, subject, grade) {
+    const gradeObject = {
+      student: student,
+      subject: subject,
+      grade: grade
+    };
+
+    this.grades.push(gradeObject); // Adds the gradeObject to the grades array
+  }
+
+  // Method to display all grades
+  displayGrades() {
+    return this.grades;
+  }
+}
+
+// Creating an instance of Grades
+const grades = new Grades();
+
+
+
+
+function displayAllStudents(School) {
+  let result = "";
+  for (let student of School.students) {
+    result += `${student.name}, `;
+  }
+  return result;
+}
+
+function displayAllSubjectsOfStudent(Student) {
+  let list = "";
+  for (let subject of Student.subjects) {
+    list += `${subject.name}, `;
+  }
+  return list;
+}
+
+function displayAllStudentsEnlistedToSubject(subject) {
+  let list = "";
+  for (Student of subject.students) {
+    list += `${Student.name}, `;
+  }
+  return list;
+}
 
 // Adderar logik för systemet ska kunnas leka runt
 
@@ -131,6 +213,3 @@ teacher2.addSubjectToTeacher(subject3, subject2);
 teacher3.addSubjectToTeacher(subject4, subject5);
 
 // Just nu på uppgift: 11
-
-
-
